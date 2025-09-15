@@ -1,0 +1,8 @@
+# This file ensures the images directory is tracked by git
+# Place property images in this directory:
+# - valentine_house_1_1.jpg
+# - valentine_apt_1_1.jpg
+# - strawberry_cabin_1_1.jpg
+# - saintdenis_mansion_1_1.jpg
+# - rhodes_house_1_1.jpg
+# - default-property.jpg
