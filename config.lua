@@ -1,7 +1,7 @@
 Config = {}
 
 -- General Settings
-Config.Debug = false
+Config.Debug = true -- Enable for testing, set to false in production
 Config.UseTarget = true -- Use rsg-target for interactions
 Config.RentPaymentInterval = 7 -- Days between rent payments
 Config.MaxHousesPerPlayer = 3

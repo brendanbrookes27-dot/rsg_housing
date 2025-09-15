@@ -12,8 +12,6 @@ local PropertyZones = {}
 CreateThread(function()
     Wait(1000)
     LoadProperties()
-    CreatePropertyBlips()
-    CreatePropertyZones()
     if Config.Debug then
         print('^2[RSG Housing]^7 Client initialized successfully')
     end
@@ -22,59 +20,171 @@ end)
 -- Load properties from server
 function LoadProperties()
     RSGCore.Functions.TriggerCallback('rsg_housing:server:getProperties', function(properties)
-        Properties = properties
-        if Config.Debug then
-            print('^2[RSG Housing]^7 Loaded ' .. #Properties .. ' properties on client')
+        if properties then
+            Properties = properties
+            if Config.Debug then
+                print('^2[RSG Housing]^7 Loaded ' .. table.count(Properties) .. ' properties on client')
+            end
+            -- Create blips and zones after properties are loaded
+            CreatePropertyBlips()
+            CreatePropertyZones()
+        else
+            if Config.Debug then
+                print('^1[RSG Housing]^7 Failed to load properties from server')
+            end
         end
     end)
 end
 
 -- Create blips for all properties
 function CreatePropertyBlips()
+    if not Properties or table.count(Properties) == 0 then
+        if Config.Debug then
+            print('^3[RSG Housing]^7 No properties to create blips for')
+        end
+        return
+    end
+    
     for propertyId, property in pairs(Properties) do
         CreatePropertyBlip(property)
+    end
+    
+    if Config.Debug then
+        print('^2[RSG Housing]^7 Created blips for ' .. table.count(PropertyBlips) .. ' properties')
     end
 end
 
 -- Create individual property blip
 function CreatePropertyBlip(property)
-    if PropertyBlips[property.id] then
-        RemoveBlip(PropertyBlips[property.id])
+    if not property or not property.coords then
+        if Config.Debug then
+            print('^1[RSG Housing]^7 Invalid property data for blip creation')
+        end
+        return
     end
     
+    -- Remove existing blip if it exists
+    if PropertyBlips[property.id] then
+        RemoveBlip(PropertyBlips[property.id])
+        PropertyBlips[property.id] = nil
+    end
+    
+    -- Create the blip
     local blip = Citizen.InvokeNative(0x554D9D53F696D002, 1664425300, property.coords.x, property.coords.y, property.coords.z)
     
-    -- Get ownership to determine blip color
+    if not blip or blip == 0 then
+        if Config.Debug then
+            print('^1[RSG Housing]^7 Failed to create blip for property ' .. property.id)
+        end
+        return
+    end
+    
+    -- Store blip immediately
+    PropertyBlips[property.id] = blip
+    
+    -- Get ownership to determine blip appearance
     RSGCore.Functions.TriggerCallback('rsg_housing:server:getPropertyOwnership', function(ownership)
-        local blipConfig = Config.HouseBlip
+        if not DoesBlipExist(blip) then
+            if Config.Debug then
+                print('^1[RSG Housing]^7 Blip no longer exists for property ' .. property.id)
+            end
+            return
+        end
+        
+        local blipConfig = Config.HouseBlip -- Default for available properties
         
         if ownership then
             if ownership.ownership_type == 'owned' then
                 blipConfig = Config.OwnedBlip
-            else
+            elseif ownership.ownership_type == 'rented' then
                 blipConfig = Config.RentedBlip
             end
         end
         
+        -- Set blip sprite
         SetBlipSprite(blip, blipConfig.Sprite, true)
+        
+        -- Set blip scale
         Citizen.InvokeNative(0x9CB1A1623062F402, blip, blipConfig.Scale)
+        
+        -- Set blip color
         Citizen.InvokeNative(0x662D364ABF16DE2F, blip, GetHashKey(blipConfig.Color))
         
-        local blipName = property.label
+        -- Set blip name
+        local blipName = property.label or ('Property ' .. property.id)
         if ownership then
-            blipName = blipName .. (ownership.ownership_type == 'owned' and ' (Owned)' or ' (Rented)')
+            if ownership.ownership_type == 'owned' then
+                blipName = blipName .. ' (Owned)'
+            elseif ownership.ownership_type == 'rented' then
+                blipName = blipName .. ' (Rented)'
+            end
         else
             blipName = blipName .. ' (Available)'
         end
         
+        -- Set the blip name
         Citizen.InvokeNative(0x9CB1A1623062F402, blip, blipName)
+        
+        if Config.Debug then
+            print('^2[RSG Housing]^7 Created blip for property: ' .. blipName .. ' at ' .. property.coords.x .. ', ' .. property.coords.y .. ', ' .. property.coords.z)
+        end
     end, property.id)
+end
+
+-- Refresh all property blips
+function RefreshPropertyBlips()
+    if Config.Debug then
+        print('^2[RSG Housing]^7 Refreshing property blips')
+    end
     
-    PropertyBlips[property.id] = blip
+    -- Remove all existing blips
+    for propertyId, blip in pairs(PropertyBlips) do
+        if DoesBlipExist(blip) then
+            RemoveBlip(blip)
+        end
+    end
+    PropertyBlips = {}
+    
+    -- Recreate all blips
+    CreatePropertyBlips()
+end
+
+-- Update specific property blip
+function UpdatePropertyBlip(propertyId)
+    local property = Properties[propertyId]
+    if property then
+        CreatePropertyBlip(property)
+    end
+end
+
+-- Remove all property blips
+function RemoveAllPropertyBlips()
+    for propertyId, blip in pairs(PropertyBlips) do
+        if DoesBlipExist(blip) then
+            RemoveBlip(blip)
+        end
+    end
+    PropertyBlips = {}
+end
+
+-- Utility function to count table entries
+function table.count(t)
+    local count = 0
+    for _ in pairs(t) do
+        count = count + 1
+    end
+    return count
 end
 
 -- Create property interaction zones
 function CreatePropertyZones()
+    if not Properties or table.count(Properties) == 0 then
+        if Config.Debug then
+            print('^3[RSG Housing]^7 No properties to create zones for')
+        end
+        return
+    end
+    
     if Config.UseTarget then
         CreateTargetZones()
     else
@@ -618,6 +728,13 @@ RegisterNetEvent('rsg_housing:client:exitProperty', function(property)
 end)
 
 -- Commands
+RegisterCommand('refreshblips', function()
+    if Config.Debug then
+        RefreshPropertyBlips()
+        RSGCore.Functions.Notify('Property blips refreshed', 'success')
+    end
+end)
+
 RegisterCommand('housing', function()
     RSGCore.Functions.TriggerCallback('rsg_housing:server:getPlayerProperties', function(properties)
         if #properties == 0 then
@@ -708,5 +825,74 @@ RegisterNetEvent('rsg_housing:client:createHouse', function(propertyType, price)
             buyPrice = tonumber(input.buyPrice),
             rentPrice = tonumber(input.rentPrice)
         })
+    end
+end)
+
+-- Property update events
+RegisterNetEvent('rsg_housing:client:propertyCreated', function(property)
+    if property then
+        Properties[property.id] = property
+        CreatePropertyBlip(property)
+        if Config.Debug then
+            print('^2[RSG Housing]^7 New property created: ' .. property.label)
+        end
+    end
+end)
+
+RegisterNetEvent('rsg_housing:client:propertyDeleted', function(propertyId)
+    if Properties[propertyId] then
+        -- Remove blip
+        if PropertyBlips[propertyId] then
+            RemoveBlip(PropertyBlips[propertyId])
+            PropertyBlips[propertyId] = nil
+        end
+        
+        -- Remove from properties
+        Properties[propertyId] = nil
+        
+        if Config.Debug then
+            print('^2[RSG Housing]^7 Property deleted: ' .. propertyId)
+        end
+    end
+end)
+
+RegisterNetEvent('rsg_housing:client:propertyOwnershipChanged', function(propertyId)
+    -- Update the blip for this property
+    UpdatePropertyBlip(propertyId)
+    if Config.Debug then
+        print('^2[RSG Housing]^7 Property ownership changed: ' .. propertyId)
+    end
+end)
+
+RegisterNetEvent('rsg_housing:client:refreshBlips', function()
+    RefreshPropertyBlips()
+end)
+
+-- Player events
+RegisterNetEvent('RSGCore:Client:OnPlayerLoaded', function()
+    Wait(2000) -- Wait for everything to load
+    LoadProperties()
+end)
+
+RegisterNetEvent('RSGCore:Client:OnPlayerUnload', function()
+    RemoveAllPropertyBlips()
+    Properties = {}
+    CurrentProperty = nil
+    InsideProperty = false
+end)
+
+-- Cleanup on resource stop
+AddEventHandler('onResourceStop', function(resourceName)
+    if resourceName == GetCurrentResourceName() then
+        RemoveAllPropertyBlips()
+        if Config.UseTarget then
+            -- Remove all target zones
+            for propertyId, _ in pairs(Properties) do
+                exports['rsg-target']:RemoveZone('property_' .. propertyId)
+                exports['rsg-target']:RemoveZone('property_storage_' .. propertyId)
+                exports['rsg-target']:RemoveZone('property_wardrobe_' .. propertyId)
+                exports['rsg-target']:RemoveZone('property_logout_' .. propertyId)
+            end
+        end
     end
 end)

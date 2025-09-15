@@ -126,6 +126,9 @@ function PurchaseProperty(src, propertyId, purchaseType)
     -- Update player properties
     LoadPlayerProperties(Player.PlayerData.citizenid)
     
+    -- Notify all clients to update this property's blip
+    TriggerClientEvent('rsg_housing:client:propertyOwnershipChanged', -1, propertyId)
+    
     return true
 end
 
@@ -162,6 +165,9 @@ function SellProperty(src, propertyId)
     
     -- Update player properties
     LoadPlayerProperties(Player.PlayerData.citizenid)
+    
+    -- Notify all clients to update this property's blip
+    TriggerClientEvent('rsg_housing:client:propertyOwnershipChanged', -1, propertyId)
     
     return true, sellPrice
 end
