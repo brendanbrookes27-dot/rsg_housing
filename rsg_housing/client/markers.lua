@@ -108,9 +108,9 @@ function DrawPropertyLabel(property)
                 statusText = Lang:t('info.owned_property')
             end
         else
-            statusText = Lang:t('info.for_sale', property.price)
+            statusText = Lang:t('info.for_sale', {property.price})
             if property.rent > 0 and Config.PropertyTypes[property.type].canRent then
-                statusText = statusText .. " | " .. Lang:t('info.for_rent', property.rent)
+                statusText = statusText .. " | " .. Lang:t('info.for_rent', {property.rent})
             end
         end
         
@@ -132,7 +132,7 @@ function ShowPropertyInteraction(property)
             if InsideProperty and CurrentProperty and CurrentProperty.id == property.id then
                 interactionText = Lang:t('info.exit_property')
             else
-                interactionText = Lang:t('info.enter_property', property.label)
+                interactionText = Lang:t('info.enter_property', {property.label})
             end
         else
             -- Someone else owns this property

@@ -239,17 +239,17 @@ end)
 
 -- Server Response Events
 RegisterNetEvent('rsg_housing:client:propertyPurchased', function(property)
-    RSGCore.Functions.Notify(Lang:t('success.property_purchased', property.price), 'success')
+    RSGCore.Functions.Notify(Lang:t('success.property_purchased', {property.price}), 'success')
     TriggerServerEvent('rsg_housing:server:loadProperties') -- Refresh properties
 end)
 
 RegisterNetEvent('rsg_housing:client:propertyRented', function(property)
-    RSGCore.Functions.Notify(Lang:t('success.property_rented', property.rent), 'success')
+    RSGCore.Functions.Notify(Lang:t('success.property_rented', {property.rent}), 'success')
     TriggerServerEvent('rsg_housing:server:loadProperties') -- Refresh properties
 end)
 
 RegisterNetEvent('rsg_housing:client:propertySold', function(salePrice)
-    RSGCore.Functions.Notify(Lang:t('success.property_sold', salePrice), 'success')
+    RSGCore.Functions.Notify(Lang:t('success.property_sold', {salePrice}), 'success')
     TriggerServerEvent('rsg_housing:server:loadProperties') -- Refresh properties
 end)
 
@@ -259,11 +259,11 @@ RegisterNetEvent('rsg_housing:client:lockToggled', function(isLocked)
 end)
 
 RegisterNetEvent('rsg_housing:client:keysGiven', function(playerName)
-    RSGCore.Functions.Notify(Lang:t('success.keys_given', playerName), 'success')
+    RSGCore.Functions.Notify(Lang:t('success.keys_given', {playerName}), 'success')
 end)
 
 RegisterNetEvent('rsg_housing:client:keysRemoved', function(playerName)
-    RSGCore.Functions.Notify(Lang:t('success.keys_removed', playerName), 'success')
+    RSGCore.Functions.Notify(Lang:t('success.keys_removed', {playerName}), 'success')
 end)
 
 RegisterNetEvent('rsg_housing:client:doorbellRang', function(propertyLabel, playerName)

@@ -57,7 +57,7 @@ function ShowPropertyMenu(property)
             -- Player owns this property
             table.insert(menuOptions, {
                 title = Lang:t('menu.enter_property'),
-                description = Lang:t('info.enter_property', property.label),
+                description = Lang:t('info.enter_property', {property.label}),
                 icon = 'fas fa-door-open',
                 event = 'rsg_housing:client:enterProperty',
                 args = property
@@ -94,7 +94,7 @@ function ShowPropertyMenu(property)
         -- Property is available
         table.insert(menuOptions, {
             title = Lang:t('menu.purchase_property'),
-            description = Lang:t('info.for_sale', property.price),
+            description = Lang:t('info.for_sale', {property.price}),
             icon = 'fas fa-dollar-sign',
             event = 'rsg_housing:client:purchaseProperty',
             args = property
@@ -103,7 +103,7 @@ function ShowPropertyMenu(property)
         if property.rent > 0 and Config.PropertyTypes[property.type].canRent then
             table.insert(menuOptions, {
                 title = Lang:t('menu.rent_property'),
-                description = Lang:t('info.for_rent', property.rent),
+                description = Lang:t('info.for_rent', {property.rent}),
                 icon = 'fas fa-key',
                 event = 'rsg_housing:client:rentProperty',
                 args = property

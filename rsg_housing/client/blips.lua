@@ -8,7 +8,7 @@ function CreatePropertyBlip(property)
     -- Determine blip configuration based on property status and type
     if property.type == 'saloon' then
         blipConfig = Config.Blips.Saloon
-        blipLabel = Lang:t('info.saloon_marker', property.label)
+        blipLabel = Lang:t('info.saloon_marker', {property.label})
     elseif property.owner then
         blipConfig = Config.Blips.Owned
         if property.owner == RSGCore.Functions.GetPlayerData().citizenid then
