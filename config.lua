@@ -254,47 +254,48 @@ Config.Locales = {
     }
 }
 
--- Interior Shells (MLO/IPL configurations)
+-- Interior Shells (RedM/RSG Compatible)
+-- These use offset coordinates from the property entrance
 Config.Shells = {
     ['rsg_housing_shell_01'] = {
         label = 'Basic House Interior',
         hash = 'rsg_housing_shell_01',
-        doorCoords = vector3(0.0, 0.0, 0.0),
-        stashCoords = vector3(2.0, 3.0, 1.0),
-        clothingCoords = vector3(-2.0, 3.0, 1.0),
-        logoutCoords = vector3(0.0, 5.0, 1.0)
+        doorCoords = vector3(0.0, 2.0, 1.0), -- Interior entrance offset
+        stashCoords = vector3(2.0, 5.0, 1.0), -- Storage location offset
+        clothingCoords = vector3(-2.0, 5.0, 1.0), -- Wardrobe location offset
+        logoutCoords = vector3(0.0, 8.0, 1.0) -- Logout/bed location offset
     },
     ['rsg_housing_shell_02'] = {
         label = 'Apartment Interior',
         hash = 'rsg_housing_shell_02',
-        doorCoords = vector3(0.0, 0.0, 0.0),
-        stashCoords = vector3(1.0, 2.0, 1.0),
-        clothingCoords = vector3(-1.0, 2.0, 1.0),
-        logoutCoords = vector3(0.0, 3.0, 1.0)
+        doorCoords = vector3(0.0, 1.5, 1.0),
+        stashCoords = vector3(1.0, 3.0, 1.0),
+        clothingCoords = vector3(-1.0, 3.0, 1.0),
+        logoutCoords = vector3(0.0, 4.5, 1.0)
     },
     ['rsg_housing_shell_03'] = {
         label = 'Cabin Interior',
         hash = 'rsg_housing_shell_03',
-        doorCoords = vector3(0.0, 0.0, 0.0),
-        stashCoords = vector3(2.5, 2.0, 1.0),
-        clothingCoords = vector3(-2.5, 2.0, 1.0),
-        logoutCoords = vector3(0.0, 4.0, 1.0)
+        doorCoords = vector3(0.0, 2.5, 1.0),
+        stashCoords = vector3(2.5, 4.0, 1.0),
+        clothingCoords = vector3(-2.5, 4.0, 1.0),
+        logoutCoords = vector3(0.0, 6.0, 1.0)
     },
     ['rsg_housing_shell_04'] = {
         label = 'Mansion Interior',
         hash = 'rsg_housing_shell_04',
-        doorCoords = vector3(0.0, 0.0, 0.0),
-        stashCoords = vector3(5.0, 8.0, 1.0),
-        clothingCoords = vector3(-5.0, 8.0, 1.0),
-        logoutCoords = vector3(0.0, 10.0, 1.0)
+        doorCoords = vector3(0.0, 3.0, 1.0),
+        stashCoords = vector3(5.0, 10.0, 1.0),
+        clothingCoords = vector3(-5.0, 10.0, 1.0),
+        logoutCoords = vector3(0.0, 12.0, 1.0)
     },
     ['rsg_housing_shell_05'] = {
         label = 'Standard House Interior',
         hash = 'rsg_housing_shell_05',
-        doorCoords = vector3(0.0, 0.0, 0.0),
-        stashCoords = vector3(3.0, 4.0, 1.0),
-        clothingCoords = vector3(-3.0, 4.0, 1.0),
-        logoutCoords = vector3(0.0, 6.0, 1.0)
+        doorCoords = vector3(0.0, 2.0, 1.0),
+        stashCoords = vector3(3.0, 6.0, 1.0),
+        clothingCoords = vector3(-3.0, 6.0, 1.0),
+        logoutCoords = vector3(0.0, 8.0, 1.0)
     }
 }
 

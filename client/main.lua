@@ -428,17 +428,57 @@ end
 
 -- Enter property
 function EnterProperty(property)
-    if not property.shell then return end
+    if not property then 
+        if Config.Debug then
+            print('[RSG Housing] EnterProperty: No property data provided')
+        end
+        return 
+    end
+    
+    if not property.shell then 
+        if Config.Debug then
+            print('[RSG Housing] EnterProperty: Property has no shell defined')
+        end
+        -- Use default shell if none specified
+        property.shell = 'rsg_housing_shell_01'
+    end
     
     local shell = Config.Shells[property.shell]
-    if not shell then return end
+    if not shell then 
+        if Config.Debug then
+            print('[RSG Housing] EnterProperty: Shell not found: ' .. tostring(property.shell))
+        end
+        return 
+    end
     
-    -- Create interior
-    local interior = CreateInterior(property.coords.x, property.coords.y, property.coords.z, shell.hash)
+    if not property.coords then
+        if Config.Debug then
+            print('[RSG Housing] EnterProperty: Property has no coordinates')
+        end
+        return
+    end
     
-    -- Teleport player
-    SetEntityCoords(PlayerPedId(), property.coords.x + shell.doorCoords.x, property.coords.y + shell.doorCoords.y, property.coords.z + shell.doorCoords.z)
-    SetEntityHeading(PlayerPedId(), property.heading)
+    -- For RedM/RSG, we use interior coordinates instead of CreateInterior
+    local interiorCoords = vector3(
+        property.coords.x + shell.doorCoords.x,
+        property.coords.y + shell.doorCoords.y,
+        property.coords.z + shell.doorCoords.z
+    )
+    
+    if Config.Debug then
+        print('[RSG Housing] Entering property: ' .. tostring(property.label or property.id))
+        print('[RSG Housing] Interior coords: ' .. tostring(interiorCoords))
+    end
+    
+    -- Teleport player to interior
+    DoScreenFadeOut(500)
+    Wait(500)
+    
+    SetEntityCoords(PlayerPedId(), interiorCoords.x, interiorCoords.y, interiorCoords.z)
+    SetEntityHeading(PlayerPedId(), property.heading or 0.0)
+    
+    Wait(500)
+    DoScreenFadeIn(500)
     
     CurrentProperty = property
     InsideProperty = true
@@ -453,9 +493,33 @@ end
 function ExitProperty(property)
     if not InsideProperty then return end
     
-    -- Teleport player outside
+    if not property then
+        if Config.Debug then
+            print('[RSG Housing] ExitProperty: No property data provided')
+        end
+        property = CurrentProperty -- Use current property as fallback
+    end
+    
+    if not property or not property.coords then
+        if Config.Debug then
+            print('[RSG Housing] ExitProperty: No valid property coordinates')
+        end
+        return
+    end
+    
+    if Config.Debug then
+        print('[RSG Housing] Exiting property: ' .. tostring(property.label or property.id))
+    end
+    
+    -- Teleport player outside with fade effect
+    DoScreenFadeOut(500)
+    Wait(500)
+    
     SetEntityCoords(PlayerPedId(), property.coords.x, property.coords.y, property.coords.z)
-    SetEntityHeading(PlayerPedId(), property.heading)
+    SetEntityHeading(PlayerPedId(), property.heading or 0.0)
+    
+    Wait(500)
+    DoScreenFadeIn(500)
     
     CurrentProperty = nil
     InsideProperty = false

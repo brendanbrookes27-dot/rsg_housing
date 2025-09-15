@@ -34,7 +34,9 @@ local Translations = {
         ['keys_given'] = 'Keys given to %s',
         ['keys_removed'] = 'Keys removed from %s',
         ['property_locked'] = 'Property locked',
-        ['property_unlocked'] = 'Property unlocked'
+        ['property_unlocked'] = 'Property unlocked',
+        ['property_entered'] = 'You have entered the property',
+        ['property_exited'] = 'You have exited the property'
     },
     info = {
         ['property_blip'] = '%s - %s',
