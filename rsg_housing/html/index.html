@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSG Housing System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="housing-container" class="hidden">
+        <div class="housing-header">
+            <h2 id="housing-title">Property Management</h2>
+            <button id="close-btn" class="close-button">&times;</button>
+        </div>
+        
+        <div class="housing-content">
+            <div id="property-info" class="section">
+                <h3>Property Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Name:</label>
+                        <span id="property-name">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Type:</label>
+                        <span id="property-type">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Price:</label>
+                        <span id="property-price">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Owner:</label>
+                        <span id="property-owner">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="property-actions" class="section">
+                <h3>Actions</h3>
+                <div class="action-buttons">
+                    <button id="purchase-btn" class="action-btn purchase">Purchase Property</button>
+                    <button id="rent-btn" class="action-btn rent">Rent Property</button>
+                    <button id="enter-btn" class="action-btn enter">Enter Property</button>
+                    <button id="manage-btn" class="action-btn manage">Manage Property</button>
+                </div>
+            </div>
+            
+            <div id="saloon-management" class="section hidden">
+                <h3>Saloon Management</h3>
+                <div class="saloon-stats">
+                    <div class="stat-item">
+                        <label>Daily Earnings:</label>
+                        <span id="daily-earnings">$0</span>
+                    </div>
+                    <div class="stat-item">
+                        <label>Total Earnings:</label>
+                        <span id="total-earnings">$0</span>
+                    </div>
+                    <div class="stat-item">
+                        <label>Uncollected:</label>
+                        <span id="uncollected-earnings">$0</span>
+                    </div>
+                </div>
+                <div class="saloon-actions">
+                    <button id="collect-earnings-btn" class="action-btn collect">Collect Earnings</button>
+                    <button id="manage-staff-btn" class="action-btn staff">Manage Staff</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+local Translations = {
+    error = {
+        ['not_online'] = 'Player is not online',
+        ['wrong_format'] = 'Incorrect format',
+        ['player_not_exist'] = 'Player does not exist',
+        ['property_not_exist'] = 'Property does not exist',
+        ['not_owner'] = 'You are not the owner of this property',
+        ['no_access'] = 'You do not have access to this property',
+        ['property_locked'] = 'This property is locked',
+        ['insufficient_funds'] = 'You do not have enough money',
+        ['max_properties'] = 'You have reached the maximum number of properties',
+        ['already_owned'] = 'This property is already owned',
+        ['already_rented'] = 'This property is already rented',
+        ['not_rented'] = 'This property is not rented',
+        ['cant_afford'] = 'You cannot afford this property',
+        ['invalid_property'] = 'Invalid property',
+        ['no_money'] = 'You don\'t have enough money',
+        ['property_unavailable'] = 'This property is not available for purchase'
+    },
+    success = {
+        ['property_purchased'] = 'Property purchased successfully for $%s',
+        ['property_rented'] = 'Property rented successfully for $%s per week',
+        ['property_sold'] = 'Property sold successfully for $%s',
+        ['rent_paid'] = 'Rent paid successfully ($%s)',
+        ['property_entered'] = 'You have entered the property',
+        ['property_exited'] = 'You have exited the property',
+        ['property_locked'] = 'Property locked',
+        ['property_unlocked'] = 'Property unlocked',
+        ['saloon_purchased'] = 'Saloon purchased successfully for $%s',
+        ['keys_given'] = 'Keys given to %s',
+        ['keys_removed'] = 'Keys removed from %s'
+    },
+    info = {
+        ['property_blip'] = '%s - %s',
+        ['owned_property'] = 'Owned Property',
+        ['rented_property'] = 'Rented Property',
+        ['available_property'] = 'Available Property',
+        ['saloon_property'] = 'Saloon',
+        ['for_sale'] = 'For Sale: $%s',
+        ['for_rent'] = 'For Rent: $%s/week',
+        ['enter_property'] = 'Press [G] to enter %s',
+        ['exit_property'] = 'Press [G] to exit property',
+        ['manage_property'] = 'Press [G] to manage property',
+        ['purchase_property'] = 'Press [G] to purchase property',
+        ['rent_property'] = 'Press [G] to rent property',
+        ['view_property'] = 'Press [G] to view property details',
+        ['ring_doorbell'] = 'Press [G] to ring doorbell',
+        ['access_storage'] = 'Press [G] to access storage',
+        ['access_wardrobe'] = 'Press [G] to access wardrobe',
+        ['property_marker'] = 'Property: %s',
+        ['saloon_marker'] = 'Saloon: %s',
+        ['price_display'] = 'Price: $%s',
+        ['rent_display'] = 'Rent: $%s/week',
+        ['property_type'] = 'Type: %s',
+        ['property_owner'] = 'Owner: %s',
+        ['property_available'] = 'Available for Purchase',
+        ['property_owned'] = 'Owned Property'
+    },
+    menu = {
+        ['property_menu'] = 'Property Menu',
+        ['purchase_property'] = 'Purchase Property',
+        ['rent_property'] = 'Rent Property',
+        ['sell_property'] = 'Sell Property',
+        ['manage_property'] = 'Manage Property',
+        ['enter_property'] = 'Enter Property',
+        ['exit_property'] = 'Exit Property',
+        ['lock_property'] = 'Lock Property',
+        ['unlock_property'] = 'Unlock Property',
+        ['give_keys'] = 'Give Keys',
+        ['remove_keys'] = 'Remove Keys',
+        ['pay_rent'] = 'Pay Rent',
+        ['property_info'] = 'Property Information',
+        ['saloon_menu'] = 'Saloon Menu',
+        ['manage_saloon'] = 'Manage Saloon',
+        ['saloon_earnings'] = 'View Earnings',
+        ['close_menu'] = 'Close Menu'
+    },
+    target = {
+        ['purchase_property'] = 'Purchase Property',
+        ['rent_property'] = 'Rent Property',
+        ['enter_property'] = 'Enter Property',
+        ['manage_property'] = 'Manage Property',
+        ['ring_doorbell'] = 'Ring Doorbell'
+    }
+}
+
+Lang = Locale:new({
+    phrases = Translations,
+    warnOnMissing = true
+})

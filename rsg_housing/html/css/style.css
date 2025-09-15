@@ -1,0 +1,254 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: transparent;
+    color: #fff;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#housing-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    max-height: 80vh;
+    background: linear-gradient(135deg, #2c1810 0%, #1a0f08 100%);
+    border: 2px solid #8b4513;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+}
+
+.housing-header {
+    background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #654321;
+}
+
+.housing-header h2 {
+    color: #f4e4bc;
+    font-size: 1.5em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: #f4e4bc;
+    font-size: 2em;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.close-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.housing-content {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.section {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: rgba(139, 69, 19, 0.1);
+    border: 1px solid rgba(139, 69, 19, 0.3);
+    border-radius: 8px;
+}
+
+.section h3 {
+    color: #f4e4bc;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(139, 69, 19, 0.2);
+}
+
+.info-item label {
+    color: #d4af37;
+    font-weight: bold;
+}
+
+.info-item span {
+    color: #f4e4bc;
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.action-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.action-btn.purchase {
+    background: linear-gradient(135deg, #228b22 0%, #006400 100%);
+    color: white;
+}
+
+.action-btn.purchase:hover {
+    background: linear-gradient(135deg, #32cd32 0%, #228b22 100%);
+    transform: translateY(-2px);
+}
+
+.action-btn.rent {
+    background: linear-gradient(135deg, #4169e1 0%, #0000cd 100%);
+    color: white;
+}
+
+.action-btn.rent:hover {
+    background: linear-gradient(135deg, #6495ed 0%, #4169e1 100%);
+    transform: translateY(-2px);
+}
+
+.action-btn.enter {
+    background: linear-gradient(135deg, #ff8c00 0%, #ff6347 100%);
+    color: white;
+}
+
+.action-btn.enter:hover {
+    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+    transform: translateY(-2px);
+}
+
+.action-btn.manage {
+    background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+    color: white;
+}
+
+.action-btn.manage:hover {
+    background: linear-gradient(135deg, #a0522d 0%, #8b4513 100%);
+    transform: translateY(-2px);
+}
+
+.action-btn.collect {
+    background: linear-gradient(135deg, #daa520 0%, #b8860b 100%);
+    color: white;
+}
+
+.action-btn.collect:hover {
+    background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
+    transform: translateY(-2px);
+}
+
+.action-btn.staff {
+    background: linear-gradient(135deg, #9370db 0%, #663399 100%);
+    color: white;
+}
+
+.action-btn.staff:hover {
+    background: linear-gradient(135deg, #ba55d3 0%, #9370db 100%);
+    transform: translateY(-2px);
+}
+
+.saloon-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 10px;
+    background: rgba(218, 165, 32, 0.1);
+    border: 1px solid rgba(218, 165, 32, 0.3);
+    border-radius: 6px;
+}
+
+.stat-item label {
+    display: block;
+    color: #d4af37;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.stat-item span {
+    color: #f4e4bc;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.saloon-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* Scrollbar styling */
+.housing-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.housing-content::-webkit-scrollbar-track {
+    background: rgba(139, 69, 19, 0.1);
+    border-radius: 4px;
+}
+
+.housing-content::-webkit-scrollbar-thumb {
+    background: rgba(139, 69, 19, 0.5);
+    border-radius: 4px;
+}
+
+.housing-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 69, 19, 0.7);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+#housing-container:not(.hidden) {
+    animation: fadeIn 0.3s ease-out;
+}
