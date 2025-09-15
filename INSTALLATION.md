@@ -1,6 +1,6 @@
 # Installation Guide - RSG Housing
 
-This guide will walk you through the complete installation process for the RSG Housing system.
+This guide will walk you through the complete installation process for the RSG Housing system with enhanced blip functionality.
 
 ## Prerequisites
 
@@ -135,11 +135,32 @@ Ensure your admin system recognizes these permissions.
 4. **Test interaction** - Approach a property and press G or use target
 5. **Check console** - Look for any error messages
 
+#### Testing the Blip System
+1. **Enable debug mode** - Set `Config.Debug = true` in config.lua
+2. **Restart the resource** - `/restart rsg_housing`
+3. **Check console messages**:
+   ```
+   [RSG Housing] Housing system initialized successfully
+   [RSG Housing] Loaded X properties
+   [RSG Housing] Creating property blips...
+   [RSG Housing] Created blip for property: Property Name (ID: X)
+   [RSG Housing] Created X property blips
+   ```
+4. **Test blip colors**:
+   - Available properties: Blue blips
+   - Rented properties: Yellow blips  
+   - Owned properties: Green blips
+5. **Test ownership changes**:
+   - Purchase a property
+   - Verify blip color changes immediately
+   - Use `/refreshblips` command if needed
+
 #### Common Startup Messages
 ```
 [RSG Housing] Housing system initialized successfully
 [RSG Housing] Loaded X properties
 [RSG Housing] Storage system initialized
+[RSG Housing] Created X property blips
 ```
 
 ## Troubleshooting Installation
