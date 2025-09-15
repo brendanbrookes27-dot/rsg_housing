@@ -64,9 +64,41 @@
 4. Test `/exitproperty` command
 5. Verify no script errors in server console
 
+### 4. Lang:t() Locale Parameter Format Errors (CRITICAL)
+**Error:** `SCRIPT ERROR: bad argument #1 to 'for iterator' (table expected, got string)`
+
+**Root Cause:** RSG Framework's locale system expects parameters to be passed as a table, but the code was passing them as individual values.
+
+**Solution:** Updated all Lang:t() calls to use proper table format for parameters.
+
+**Files Modified:**
+- `client/blips.lua`
+- `client/markers.lua` 
+- `client/interactions.lua`
+- `client/main.lua`
+
+**Code Changes:**
+```lua
+-- Before (incorrect format)
+Lang:t('info.saloon_marker', property.label)
+Lang:t('info.for_sale', property.price)
+Lang:t('success.property_purchased', property.price)
+
+-- After (correct RSG Framework format)
+Lang:t('info.saloon_marker', {property.label})
+Lang:t('info.for_sale', {property.price})
+Lang:t('success.property_purchased', {property.price})
+```
+
+**Specific Fixes:**
+- Fixed saloon_marker parameter in blips.lua
+- Fixed for_sale, for_rent, enter_property parameters in markers.lua
+- Fixed property_purchased, property_rented, property_sold, keys_given, keys_removed parameters in interactions.lua
+- Fixed enter_property, for_sale, for_rent parameters in main.lua
+
 ## Version Information
 
-- **Fixed Version:** v2.0.1
-- **Commit:** 89d1307
+- **Fixed Version:** v2.0.2
+- **Latest Commit:** 7728ab6
 - **Branch:** feature/fresh-rsg-housing-system-v2
 - **Compatibility:** RedM RSG Framework v2
