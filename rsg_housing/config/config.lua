@@ -120,6 +120,33 @@ Config.PropertyTypes = {
     }
 }
 
+-- Job Permissions for House Creation
+Config.HouseCreationJobs = {
+    ['vallaw'] = {
+        minGrade = 2, -- Minimum job grade required
+        label = 'Valentine Law'
+    }
+    -- Add more jobs here if needed
+    -- ['sheriff'] = {
+    --     minGrade = 1,
+    --     label = 'Sheriff Department'
+    -- }
+}
+
+-- MLO Interiors (RedM Compatible)
+Config.MLOs = {
+    -- Add your MLO configurations here
+    -- Example:
+    -- ['custom_house_mlo'] = {
+    --     label = 'Custom House MLO',
+    --     coords = vector3(0.0, 0.0, 0.0), -- Relative spawn point inside MLO
+    --     heading = 0.0,
+    --     storage = vector3(5.0, 5.0, 0.0),
+    --     wardrobe = vector3(-5.0, 5.0, 0.0),
+    --     logout = vector3(0.0, 10.0, 0.0)
+    -- }
+}
+
 -- Interior Shells (RedM Compatible)
 Config.Shells = {
     ['basic_house'] = {

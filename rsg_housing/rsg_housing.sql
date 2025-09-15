@@ -9,9 +9,12 @@ CREATE TABLE IF NOT EXISTS `rsg_housing_properties` (
     `heading` float NOT NULL DEFAULT 0.0,
     `price` int(11) NOT NULL DEFAULT 0,
     `rent` int(11) NOT NULL DEFAULT 0,
-    `shell` varchar(50) NOT NULL DEFAULT 'basic_house',
+    `shell` varchar(50) DEFAULT 'basic_house',
+    `mlo` varchar(100) DEFAULT NULL,
     `garage` tinyint(1) NOT NULL DEFAULT 0,
     `description` text DEFAULT NULL,
+    `created_by` varchar(50) DEFAULT NULL,
+    `created_date` timestamp NULL DEFAULT NULL,
     `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

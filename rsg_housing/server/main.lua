@@ -331,3 +331,113 @@ end
 RegisterNetEvent('RSGCore:Server:OnPlayerUnload', function(src)
     -- Any cleanup needed when player disconnects
 end)
+
+-- Create House Command (Job Restricted)
+RegisterCommand('createhouse', function(source, args, rawCommand)
+    local src = source
+    local Player = RSGCore.Functions.GetPlayer(src)
+    
+    if not Player then return end
+    
+    -- Check if player has permission to create houses
+    local hasPermission = false
+    local playerJob = Player.PlayerData.job.name
+    local playerGrade = Player.PlayerData.job.grade.level
+    
+    for jobName, jobConfig in pairs(Config.HouseCreationJobs) do
+        if playerJob == jobName and playerGrade >= jobConfig.minGrade then
+            hasPermission = true
+            break
+        end
+    end
+    
+    if not hasPermission then
+        TriggerClientEvent('RSGCore:Notify', src, Lang:t('error.no_permission'), 'error')
+        return
+    end
+    
+    -- Trigger client event to start house creation process
+    TriggerClientEvent('rsg_housing:client:startHouseCreation', src)
+end, false)
+
+-- Handle house creation from client
+RegisterNetEvent('rsg_housing:server:createHouse', function(houseData)
+    local src = source
+    local Player = RSGCore.Functions.GetPlayer(src)
+    
+    if not Player then return end
+    
+    -- Double check permissions
+    local hasPermission = false
+    local playerJob = Player.PlayerData.job.name
+    local playerGrade = Player.PlayerData.job.grade.level
+    
+    for jobName, jobConfig in pairs(Config.HouseCreationJobs) do
+        if playerJob == jobName and playerGrade >= jobConfig.minGrade then
+            hasPermission = true
+            break
+        end
+    end
+    
+    if not hasPermission then
+        TriggerClientEvent('RSGCore:Notify', src, Lang:t('error.no_permission'), 'error')
+        return
+    end
+    
+    -- Generate unique property ID
+    local propertyId = 'custom_' .. math.random(10000, 99999)
+    while Properties[propertyId] do
+        propertyId = 'custom_' .. math.random(10000, 99999)
+    end
+    
+    -- Create property data
+    local property = {
+        id = propertyId,
+        label = houseData.label or 'Custom Property',
+        type = houseData.type or 'house',
+        coords = houseData.coords,
+        heading = houseData.heading or 0.0,
+        price = houseData.price or 2500,
+        rent = houseData.rent or 150,
+        mlo = houseData.mlo or nil,
+        shell = houseData.shell or 'basic_house',
+        garage = houseData.garage or false,
+        description = houseData.description or 'Custom created property',
+        created_by = Player.PlayerData.citizenid,
+        created_date = os.date('%Y-%m-%d %H:%M:%S')
+    }
+    
+    -- Insert into database
+    local success = MySQL.insert.await('INSERT INTO rsg_housing_properties (id, label, type, coords, heading, price, rent, mlo, shell, garage, description, created_by, created_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', {
+        property.id,
+        property.label,
+        property.type,
+        json.encode({x = property.coords.x, y = property.coords.y, z = property.coords.z}),
+        property.heading,
+        property.price,
+        property.rent,
+        property.mlo,
+        property.shell,
+        property.garage and 1 or 0,
+        property.description,
+        property.created_by,
+        property.created_date
+    })
+    
+    if success then
+        -- Add to local properties table
+        Properties[property.id] = property
+        
+        -- Notify all clients to update properties
+        TriggerClientEvent('rsg_housing:client:updateProperties', -1, Properties)
+        
+        -- Notify creator
+        TriggerClientEvent('RSGCore:Notify', src, Lang:t('success.house_created'), 'success')
+        
+        if Config.Debug then
+            print('[RSG Housing] Property ' .. property.id .. ' created by ' .. Player.PlayerData.name)
+        end
+    else
+        TriggerClientEvent('RSGCore:Notify', src, Lang:t('error.house_creation_failed'), 'error')
+    end
+end)

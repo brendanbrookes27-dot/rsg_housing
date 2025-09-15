@@ -242,16 +242,37 @@ RegisterNetEvent('rsg_housing:client:enterProperty', function(property)
     DoScreenFadeOut(500)
     Wait(500)
     
-    local shell = Config.Shells[property.shell]
-    if shell then
-        local interiorCoords = vector3(
-            property.coords.x + shell.coords.x,
-            property.coords.y + shell.coords.y,
-            property.coords.z + shell.coords.z
-        )
-        
-        SetEntityCoords(PlayerPedId(), interiorCoords.x, interiorCoords.y, interiorCoords.z)
-        SetEntityHeading(PlayerPedId(), shell.heading)
+    -- Check if property uses MLO or shell
+    if property.mlo and property.mlo ~= '' then
+        -- MLO Interior
+        local mloConfig = Config.MLOs[property.mlo]
+        if mloConfig then
+            local interiorCoords = vector3(
+                property.coords.x + mloConfig.coords.x,
+                property.coords.y + mloConfig.coords.y,
+                property.coords.z + mloConfig.coords.z
+            )
+            
+            SetEntityCoords(PlayerPedId(), interiorCoords.x, interiorCoords.y, interiorCoords.z)
+            SetEntityHeading(PlayerPedId(), mloConfig.heading)
+        else
+            -- MLO not configured, use property coordinates
+            SetEntityCoords(PlayerPedId(), property.coords.x, property.coords.y, property.coords.z)
+            SetEntityHeading(PlayerPedId(), property.heading)
+        end
+    else
+        -- Shell Interior (fallback)
+        local shell = Config.Shells[property.shell or 'basic_house']
+        if shell then
+            local interiorCoords = vector3(
+                property.coords.x + shell.coords.x,
+                property.coords.y + shell.coords.y,
+                property.coords.z + shell.coords.z
+            )
+            
+            SetEntityCoords(PlayerPedId(), interiorCoords.x, interiorCoords.y, interiorCoords.z)
+            SetEntityHeading(PlayerPedId(), shell.heading)
+        end
     end
     
     Wait(500)
@@ -382,3 +403,310 @@ CreateThread(function()
         end
     end
 end)
+
+-- House Creation System
+local creatingHouse = false
+local houseCreationData = {}
+
+-- Start house creation process
+RegisterNetEvent('rsg_housing:client:startHouseCreation', function()
+    creatingHouse = true
+    houseCreationData = {}
+    
+    RSGCore.Functions.Notify(Lang:t('info.house_creation_started'), 'primary')
+    RSGCore.Functions.Notify(Lang:t('info.house_creation_instructions'), 'primary')
+    
+    -- Start creation thread
+    CreateThread(function()
+        while creatingHouse do
+            Wait(0)
+            
+            -- Draw instructions
+            local str = CreateVarString(10, "LITERAL_STRING", Lang:t('info.house_creation_controls'))
+            SetTextScale(0.35, 0.35)
+            SetTextColor(255, 255, 255, 255)
+            SetTextCentre(true)
+            DisplayText(str, 0.5, 0.05)
+            
+            -- Handle input
+            if IsControlJustPressed(0, 0xC7B5340A) then -- Enter key
+                SetHouseLocation()
+            elseif IsControlJustPressed(0, 0x156F7119) then -- Escape key
+                CancelHouseCreation()
+            end
+        end
+    end)
+end)
+
+-- Set house location
+function SetHouseLocation()
+    local playerPed = PlayerPedId()
+    local coords = GetEntityCoords(playerPed)
+    local heading = GetEntityHeading(playerPed)
+    
+    houseCreationData.coords = coords
+    houseCreationData.heading = heading
+    
+    RSGCore.Functions.Notify(Lang:t('success.location_set'), 'success')
+    
+    -- Open house configuration menu
+    OpenHouseConfigMenu()
+end
+
+-- Open house configuration menu
+function OpenHouseConfigMenu()
+    local menu = {
+        {
+            header = Lang:t('menu.house_config_title'),
+            isMenuHeader = true
+        },
+        {
+            header = Lang:t('menu.set_label'),
+            txt = Lang:t('menu.set_label_desc'),
+            params = {
+                event = 'rsg_housing:client:setHouseLabel',
+                args = {}
+            }
+        },
+        {
+            header = Lang:t('menu.set_type'),
+            txt = Lang:t('menu.set_type_desc'),
+            params = {
+                event = 'rsg_housing:client:setHouseType',
+                args = {}
+            }
+        },
+        {
+            header = Lang:t('menu.set_price'),
+            txt = Lang:t('menu.set_price_desc'),
+            params = {
+                event = 'rsg_housing:client:setHousePrice',
+                args = {}
+            }
+        },
+        {
+            header = Lang:t('menu.set_rent'),
+            txt = Lang:t('menu.set_rent_desc'),
+            params = {
+                event = 'rsg_housing:client:setHouseRent',
+                args = {}
+            }
+        },
+        {
+            header = Lang:t('menu.set_mlo'),
+            txt = Lang:t('menu.set_mlo_desc'),
+            params = {
+                event = 'rsg_housing:client:setHouseMLO',
+                args = {}
+            }
+        },
+        {
+            header = Lang:t('menu.create_house'),
+            txt = Lang:t('menu.create_house_desc'),
+            params = {
+                event = 'rsg_housing:client:confirmHouseCreation',
+                args = {}
+            }
+        },
+        {
+            header = Lang:t('menu.cancel'),
+            txt = Lang:t('menu.cancel_desc'),
+            params = {
+                event = 'rsg_housing:client:cancelHouseCreation',
+                args = {}
+            }
+        }
+    }
+    
+    exports['rsg-menu']:openMenu(menu)
+end
+
+-- Set house label
+RegisterNetEvent('rsg_housing:client:setHouseLabel', function()
+    local input = exports['rsg-input']:ShowInput({
+        header = Lang:t('input.house_label'),
+        submitText = Lang:t('input.submit'),
+        inputs = {
+            {
+                type = 'text',
+                isRequired = true,
+                name = 'label',
+                text = Lang:t('input.house_label_placeholder')
+            }
+        }
+    })
+    
+    if input and input.label then
+        houseCreationData.label = input.label
+        RSGCore.Functions.Notify(Lang:t('success.label_set', {input.label}), 'success')
+        OpenHouseConfigMenu()
+    end
+end)
+
+-- Set house type
+RegisterNetEvent('rsg_housing:client:setHouseType', function()
+    local typeMenu = {
+        {
+            header = Lang:t('menu.select_house_type'),
+            isMenuHeader = true
+        }
+    }
+    
+    for typeKey, typeData in pairs(Config.PropertyTypes) do
+        table.insert(typeMenu, {
+            header = typeData.label,
+            txt = typeData.description,
+            params = {
+                event = 'rsg_housing:client:confirmHouseType',
+                args = {type = typeKey}
+            }
+        })
+    end
+    
+    table.insert(typeMenu, {
+        header = Lang:t('menu.back'),
+        params = {
+            event = 'rsg_housing:client:openHouseConfigMenu',
+            args = {}
+        }
+    })
+    
+    exports['rsg-menu']:openMenu(typeMenu)
+end)
+
+-- Confirm house type
+RegisterNetEvent('rsg_housing:client:confirmHouseType', function(data)
+    houseCreationData.type = data.type
+    RSGCore.Functions.Notify(Lang:t('success.type_set', {Config.PropertyTypes[data.type].label}), 'success')
+    OpenHouseConfigMenu()
+end)
+
+-- Set house price
+RegisterNetEvent('rsg_housing:client:setHousePrice', function()
+    local input = exports['rsg-input']:ShowInput({
+        header = Lang:t('input.house_price'),
+        submitText = Lang:t('input.submit'),
+        inputs = {
+            {
+                type = 'number',
+                isRequired = true,
+                name = 'price',
+                text = Lang:t('input.house_price_placeholder')
+            }
+        }
+    })
+    
+    if input and input.price then
+        houseCreationData.price = tonumber(input.price)
+        RSGCore.Functions.Notify(Lang:t('success.price_set', {input.price}), 'success')
+        OpenHouseConfigMenu()
+    end
+end)
+
+-- Set house rent
+RegisterNetEvent('rsg_housing:client:setHouseRent', function()
+    local input = exports['rsg-input']:ShowInput({
+        header = Lang:t('input.house_rent'),
+        submitText = Lang:t('input.submit'),
+        inputs = {
+            {
+                type = 'number',
+                isRequired = false,
+                name = 'rent',
+                text = Lang:t('input.house_rent_placeholder')
+            }
+        }
+    })
+    
+    if input then
+        houseCreationData.rent = tonumber(input.rent) or 0
+        RSGCore.Functions.Notify(Lang:t('success.rent_set', {input.rent or '0'}), 'success')
+        OpenHouseConfigMenu()
+    end
+end)
+
+-- Set house MLO
+RegisterNetEvent('rsg_housing:client:setHouseMLO', function()
+    local input = exports['rsg-input']:ShowInput({
+        header = Lang:t('input.house_mlo'),
+        submitText = Lang:t('input.submit'),
+        inputs = {
+            {
+                type = 'text',
+                isRequired = false,
+                name = 'mlo',
+                text = Lang:t('input.house_mlo_placeholder')
+            }
+        }
+    })
+    
+    if input then
+        houseCreationData.mlo = input.mlo
+        if input.mlo and input.mlo ~= '' then
+            RSGCore.Functions.Notify(Lang:t('success.mlo_set', {input.mlo}), 'success')
+        else
+            RSGCore.Functions.Notify(Lang:t('success.mlo_cleared'), 'success')
+        end
+        OpenHouseConfigMenu()
+    end
+end)
+
+-- Confirm house creation
+RegisterNetEvent('rsg_housing:client:confirmHouseCreation', function()
+    if not houseCreationData.coords then
+        RSGCore.Functions.Notify(Lang:t('error.no_location_set'), 'error')
+        return
+    end
+    
+    -- Set defaults if not specified
+    houseCreationData.label = houseCreationData.label or 'Custom Property'
+    houseCreationData.type = houseCreationData.type or 'house'
+    houseCreationData.price = houseCreationData.price or 2500
+    houseCreationData.rent = houseCreationData.rent or 150
+    
+    -- Send to server
+    TriggerServerEvent('rsg_housing:server:createHouse', houseCreationData)
+    
+    -- Reset creation state
+    creatingHouse = false
+    houseCreationData = {}
+end)
+
+-- Cancel house creation
+RegisterNetEvent('rsg_housing:client:cancelHouseCreation', function()
+    CancelHouseCreation()
+end)
+
+-- Open house config menu event
+RegisterNetEvent('rsg_housing:client:openHouseConfigMenu', function()
+    OpenHouseConfigMenu()
+end)
+
+-- Cancel house creation function
+function CancelHouseCreation()
+    creatingHouse = false
+    houseCreationData = {}
+    RSGCore.Functions.Notify(Lang:t('info.house_creation_cancelled'), 'primary')
+end
+
+-- Update properties from server
+RegisterNetEvent('rsg_housing:client:updateProperties', function(properties)
+    Properties = properties
+    -- Refresh markers and blips
+    RefreshPropertyMarkers()
+    RefreshPropertyBlips()
+end)
+
+-- Refresh property markers
+function RefreshPropertyMarkers()
+    -- This function should trigger marker refresh
+    -- The actual marker handling is in markers.lua
+    TriggerEvent('rsg_housing:client:refreshMarkers')
+end
+
+-- Refresh property blips
+function RefreshPropertyBlips()
+    -- This function should trigger blip refresh
+    -- The actual blip handling is in blips.lua
+    TriggerEvent('rsg_housing:client:refreshBlips')
+end

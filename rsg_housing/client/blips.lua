@@ -101,3 +101,18 @@ RegisterNetEvent('rsg_housing:client:updatePropertyBlip', function(property)
     
     UpdatePropertyBlip(property)
 end)
+
+-- Refresh blips event
+RegisterNetEvent('rsg_housing:client:refreshBlips', function()
+    if Config.Debug then
+        print('[RSG Housing] Refreshing all blips')
+    end
+    
+    -- Remove existing blips
+    RemoveAllBlips()
+    
+    -- Create new blips for all properties
+    for _, property in pairs(Properties) do
+        CreatePropertyBlip(property)
+    end
+end)

@@ -83,21 +83,12 @@ function DrawPropertyLabel(property)
     local onScreen, screenX, screenY = GetScreenCoordFromWorldCoord(coords.x, coords.y, coords.z)
     
     if onScreen then
-        local scale = 0.35
-        local font = 1
-        
-        -- Property name
-        SetTextScale(scale, scale)
-        SetTextFont(font)
-        SetTextProportional(1)
-        SetTextColour(255, 255, 255, 255)
-        SetTextDropshadow(0, 0, 0, 0, 255)
-        SetTextEdge(2, 0, 0, 0, 150)
-        SetTextDropShadow()
-        SetTextOutline()
-        SetTextEntry("STRING")
-        AddTextComponentString(property.label)
-        DrawText(screenX, screenY - 0.05)
+        -- Property name (RedM compatible)
+        local str = CreateVarString(10, "LITERAL_STRING", property.label)
+        SetTextScale(0.35, 0.35)
+        SetTextColor(255, 255, 255, 255)
+        SetTextCentre(true)
+        DisplayText(str, screenX, screenY - 0.05)
         
         -- Property status/price
         local statusText = ""
@@ -114,11 +105,11 @@ function DrawPropertyLabel(property)
             end
         end
         
+        local statusStr = CreateVarString(10, "LITERAL_STRING", statusText)
         SetTextScale(0.25, 0.25)
-        SetTextColour(200, 200, 200, 255)
-        SetTextEntry("STRING")
-        AddTextComponentString(statusText)
-        DrawText(screenX, screenY - 0.02)
+        SetTextColor(200, 200, 200, 255)
+        SetTextCentre(true)
+        DisplayText(statusStr, screenX, screenY - 0.02)
     end
 end
 
@@ -189,3 +180,12 @@ end)
 function CreateVarString(p0, p1, variadic)
     return Citizen.InvokeNative(0xFA925AC00EB830B9, p0, p1, variadic, Citizen.ResultAsLong())
 end
+
+-- Refresh markers event
+RegisterNetEvent('rsg_housing:client:refreshMarkers', function()
+    -- Markers are handled in the main thread, no specific refresh needed
+    -- This event exists for compatibility with the refresh system
+    if Config.Debug then
+        print('[RSG Housing] Markers refreshed')
+    end
+end)
