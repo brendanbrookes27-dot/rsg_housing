@@ -15,19 +15,21 @@ CreateThread(function()
         NearbyProperties = {}
         
         -- Check all properties for proximity
-        for _, property in pairs(PropertyMarkers) do
-            local distance = #(playerCoords - vector3(property.coords.x, property.coords.y, property.coords.z))
-            
-            if distance <= Config.MarkerDistance then
-                sleep = 0
-                table.insert(NearbyProperties, property)
+        if PropertyMarkers and next(PropertyMarkers) then
+            for _, property in pairs(PropertyMarkers) do
+                local distance = #(playerCoords - vector3(property.coords.x, property.coords.y, property.coords.z))
                 
-                -- Draw marker
-                DrawPropertyMarker(property, distance)
-                
-                -- Show interaction text
-                if distance <= Config.InteractionDistance then
-                    ShowPropertyInteraction(property)
+                if distance <= Config.MarkerDistance then
+                    sleep = 0
+                    table.insert(NearbyProperties, property)
+                    
+                    -- Draw marker
+                    DrawPropertyMarker(property, distance)
+                    
+                    -- Show interaction text
+                    if distance <= Config.InteractionDistance then
+                        ShowPropertyInteraction(property)
+                    end
                 end
             end
         end

@@ -4,9 +4,11 @@ local RSGCore = exports['rsg-core']:GetCoreObject()
 local PlayerData = {}
 local CurrentProperty = nil
 local InsideProperty = false
-local PropertyBlips = {}
-local PropertyMarkers = {}
-local NearbyProperties = {}
+
+-- Global variables for other client files
+PropertyBlips = {}
+PropertyMarkers = {}
+NearbyProperties = {}
 
 -- Initialize
 CreateThread(function()
@@ -341,9 +343,11 @@ end)
 
 -- Utility Functions
 function RemoveAllBlips()
-    for _, blip in pairs(PropertyBlips) do
-        if DoesBlipExist(blip) then
-            RemoveBlip(blip)
+    if PropertyBlips and next(PropertyBlips) then
+        for _, blip in pairs(PropertyBlips) do
+            if DoesBlipExist(blip) then
+                RemoveBlip(blip)
+            end
         end
     end
     PropertyBlips = {}
@@ -360,4 +364,21 @@ RegisterCommand('exitproperty', function()
     end
 end, false)
 
-RegisterKeyMapping('exitproperty', 'Exit Property', 'keyboard', 'F7')
+-- Register command for exiting property
+RegisterCommand('exitproperty', function()
+    if InsideProperty and CurrentProperty then
+        ExitProperty()
+    end
+end, false)
+
+-- Key mapping for F7 (RedM compatible)
+CreateThread(function()
+    while true do
+        Wait(0)
+        if IsControlJustPressed(0, 0x3C0A40F2) then -- F7 key for RedM
+            if InsideProperty and CurrentProperty then
+                ExitProperty()
+            end
+        end
+    end
+end)

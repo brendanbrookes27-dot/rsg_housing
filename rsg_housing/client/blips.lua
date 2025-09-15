@@ -36,6 +36,9 @@ function CreatePropertyBlip(property)
     Citizen.InvokeNative(0xD38744167B2FA257, blip, blipConfig.scale) -- SetBlipScale
     
     -- Store blip reference
+    if not PropertyBlips then
+        PropertyBlips = {}
+    end
     PropertyBlips[property.id] = blip
     
     if Config.Debug then
@@ -45,6 +48,9 @@ end
 
 -- Update property blip
 function UpdatePropertyBlip(property)
+    if not PropertyBlips then
+        PropertyBlips = {}
+    end
     local existingBlip = PropertyBlips[property.id]
     
     if existingBlip and DoesBlipExist(existingBlip) then
@@ -56,6 +62,10 @@ end
 
 -- Remove property blip
 function RemovePropertyBlip(propertyId)
+    if not PropertyBlips then
+        PropertyBlips = {}
+        return
+    end
     local blip = PropertyBlips[propertyId]
     
     if blip and DoesBlipExist(blip) then
